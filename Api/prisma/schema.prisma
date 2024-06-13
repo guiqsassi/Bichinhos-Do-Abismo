@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int   @id @unique @default(autoincrement())
+  username   String
+  email   String
+  password  String
+  news News[]
+  student Student?
+  leader  Leader?
+  admin   Administrator?
+}
+
+model Student {
+  id  Int   @id @unique @default(autoincrement())
+  phone   String
+  linkeding   String
+  github    String
+  discord   String
+  userId Int  @unique
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+model Leader {
+  id  Int   @id @unique @default(autoincrement())
+  phone   String
+  linkeding   String
+  github    String
+  discord   String
+  userId Int  @unique
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+model Administrator {
+  id  Int   @id @unique @default(autoincrement())
+  phone   String
+  linkeding   String
+  github    String
+  discord   String
+  userId Int  @unique
+  user  User  @relation(fields: [userId], references: [id])
+}
+
+model Squad {
+  id    Int   @id @unique @default(autoincrement())
+  name    String
+  stack   String
+  news    News[]
+}
+
+model Project {
+  id  Int @id @unique @default(autoincrement())
+  name    String
+  technologies    String
+  repository    String
+}
+
+model News {
+  id Int @id @unique @default(autoincrement())
+  tittle    String
+  content   String
+  date    DateTime
+  squadId Int
+  squad   Squad @relation(fields: [squadId], references: [id])
+  createdById Int
+  createdBy User @relation(fields: [createdById], references: [id])
+
+}
