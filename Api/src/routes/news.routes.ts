@@ -1,12 +1,13 @@
 import express from "express"
+import authMiddleware from "../middlewares/auth";
 
 const newsRoutes = express.Router()
 
 newsRoutes.get("/:id", async(req,res)=>{
 
 })
-.get("/", async(req,res)=>{
-
+.get("/",authMiddleware, async(req,res)=>{
+  res.send("oi")
 })
 .post("/", async(req,res)=>{
 
