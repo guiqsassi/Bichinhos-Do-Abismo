@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,52 +9,60 @@ datasource db {
 
 enum Role {
   ADMIN
-  STUDENT 
+  STUDENT
   LEADER
 }
 
 model User {
-  id    Int   @id @unique @default(autoincrement())
-  username   String
-  email   String  @unique
-  password  String
-  news News[]
-  role Role @default(STUDENT)
-  profile Profile?
+  id            Int      @id @unique @default(autoincrement())
+  username      String
+  email         String   @unique
+  password      String
+  news          News[]
+  role          Role     @default(STUDENT)
+  profile       Profile?
+  squadLeaderId Int?     @unique
+  squadLeader   Squad?   @relation(fields: [squadLeaderId], references: [id])
+  squadId       Int?     @unique
+  squad         Squad?   @relation(name: "members", fields: [squadId], references: [id])
 }
 
 model Profile {
-  id  Int   @id @unique @default(autoincrement())
-  phone   String
-  linkeding   String
+  id        Int    @id @unique @default(autoincrement())
+  phone     String
+  linkeding String
   github    String
   discord   String
-  userId Int  @unique
-  user  User  @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+  user      User   @relation(fields: [userId], references: [id])
 }
 
 model Squad {
-  id    Int   @id @unique @default(autoincrement())
+  id      Int    @id @unique @default(autoincrement())
   name    String
   stack   String
   news    News[]
+  leader  User[]
+  members User[] @relation(name: "members")
+  projects  Project[]
 }
 
 model Project {
-  id  Int @id @unique @default(autoincrement())
-  name    String
-  technologies    String
-  repository    String
+  id           Int    @id @unique @default(autoincrement())
+  name         String
+  technologies String
+  repository   String
+  squadId Int @unique
+  squad   Squad @relation(fields: [squadId], references: [id])
 }
 
 model News {
-  id Int @id @unique @default(autoincrement())
-  tittle    String
-  content   String
-  date    DateTime
-  squadId Int
-  squad   Squad @relation(fields: [squadId], references: [id])
+  id          Int      @id @unique @default(autoincrement())
+  tittle      String
+  content     String
+  date        DateTime
+  squadId     Int
+  squad       Squad    @relation(fields: [squadId], references: [id])
   createdById Int
-  createdBy User @relation(fields: [createdById], references: [id])
-
+  createdBy   User     @relation(fields: [createdById], references: [id])
 }

@@ -1,21 +1,24 @@
 import express from "express"
+import projectsServices from "../services/projects.services";
+import authMiddleware from "../middlewares/auth";
+import leaderMiddleware from "../middlewares/leader";
 
 const projectsRoutes = express.Router()
 
-projectsRoutes.get("/:id", async(req,res)=>{
-
+projectsRoutes.get("/:id",authMiddleware ,async(req,res)=>{
+  projectsServices.read(req,res)
 })
-.get("/", async(req,res)=>{
-
+.get("/",authMiddleware ,async(req,res)=>{
+  projectsServices.list(req,res)
 })
-.post("/", async(req,res)=>{
-
+.post("/", leaderMiddleware,async(req,res)=>{
+  projectsServices.create(req,res)  
 })
-.put("/", async(req,res)=>{
-
+.put("/", leaderMiddleware,async(req,res)=>{
+  projectsServices.update(req,res)
 })
-.delete("/:id", async(req,res)=>{
-
+.delete("/:id", leaderMiddleware,async(req,res)=>{
+  projectsServices.delete(req,res)
 })
 
 export default projectsRoutes;

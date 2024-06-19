@@ -8,7 +8,14 @@ type Squad = {
   name:    string
   stack:   string
 }
-
+type SquadManageLeader = {
+  idUser: number,
+  idSquad: number
+}
+type SquadManageMember = {
+  idUser: number,
+  idSquad: number
+}
 const squadServices = {
 
     create: async(req: Request,res: Response)=>{
@@ -76,7 +83,83 @@ const squadServices = {
           .status(400)
           .json({message: "Houve algum problema para encontrar sua squad", err})
         })
-    }
+    },
+    addLeader: async (req:Request,res:Response)=>{
+        const leadersIds:SquadManageLeader = req.body
+
+        await prisma.squad.update({
+          where: {id: leadersIds.idSquad},
+          data: {
+            leader: {connect: {id: leadersIds.idUser}}
+          }
+        }).then(r=>{
+            res
+          .status(200)
+          .json({message: "leader adcionado com sucesso", r})
+
+        }).catch(e=>{
+          res
+          .status(400)
+          .json({message: "Erro ao adcionar leader", e})
+        })
+    },
+    addMember: async (req:Request,res:Response)=>{
+      const addMembers:SquadManageMember = req.body
+
+      await prisma.squad.update({
+        where: {id: addMembers.idSquad},
+        data: {
+          leader: {connect: {id: addMembers.idUser}}
+        }
+      }).then(r=>{
+          res
+        .status(200)
+        .json({message: "leader adcionado com sucesso", r})
+
+      }).catch(e=>{
+        res
+        .status(400)
+        .json({message: "Erro ao adcionar leader", e})
+      })
+  },
+  removeLeader: async (req:Request,res:Response)=>{
+      const leadersIds:SquadManageLeader = req.body
+
+      await prisma.squad.update({
+        where: {id: leadersIds.idSquad},
+        data: {
+          leader: {connect: {id: leadersIds.idUser}}
+        }
+      }).then(r=>{
+          res
+        .status(200)
+        .json({message: "leader adcionado com sucesso", r})
+
+      }).catch(e=>{
+        res
+        .status(400)
+        .json({message: "Erro ao adcionar leader", e})
+      })
+  },
+  removeMember: async (req:Request,res:Response)=>{
+    const addMembers:SquadManageMember = req.body
+
+    await prisma.squad.update({
+      where: {id: addMembers.idSquad},
+      data: {
+        leader: {connect: {id: addMembers.idUser}}
+      }
+    }).then(r=>{
+        res
+      .status(200)
+      .json({message: "leader adcionado com sucesso", r})
+
+    }).catch(e=>{
+      res
+      .status(400)
+      .json({message: "Erro ao adcionar leader", e})
+    })
+}
 }
 
 export default squadServices
