@@ -4,7 +4,7 @@ import { Request, Response } from "express"
 const prisma = new PrismaClient()
 
 type Project = {
-  id:           number
+  id?:           number
   name:         string
   technologies: string
   repository:   string
@@ -20,7 +20,7 @@ const projectsServices = {
         name: Project.name,
         technologies: Project.technologies,
         repository: Project.repository,
-        squad: {connect: {id: Project.squad}},
+        squad: {connect: {id: Number(Project.squad)}},
       },
       select:{
         name: true,

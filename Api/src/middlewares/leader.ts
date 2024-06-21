@@ -20,7 +20,7 @@ leaderMiddleware.use(async(req, res, next)=>{
         }else{
             prisma.user.findUnique({where: {id: Number(decode.id)}}).then(r=>{
 
-              if(r.role == "LEADER"){
+              if(r.role == "LEADER" || r.role == "ADMIN"){
                 next()
               }else{
                 res

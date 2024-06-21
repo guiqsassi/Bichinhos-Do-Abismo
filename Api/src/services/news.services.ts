@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client"
+import dayjs from "dayjs"
 import { Request, Response } from "express"
 type News = {
   id?:          number    
@@ -20,9 +21,9 @@ const newsService =  {
       data: {
         tittle: newsInputData.tittle,
         content: newsInputData.content,
-        date: newsInputData.date,
-        squad: {connect: {id: newsInputData.squad}},
-        createdBy: {connect: {id:newsInputData.createdBy}}
+        date: dayjs(Date.now()).toDate(),
+        squad: {connect: {id: Number(newsInputData.squad)}},
+        createdBy: {connect: {id: Number(newsInputData.createdBy)}}
       },
       select:{
         tittle: true,

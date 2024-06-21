@@ -11,7 +11,7 @@ userRoutes.get("/:id",authMiddleware ,async(req,res)=>{
 .get("/", authMiddleware,async(req,res)=>{
   UserSevices.list(req,res)
 })
-.post("/", adminMiddleware,async(req,res)=>{
+.post("/",async(req,res)=>{
   UserSevices.create(req,res)
 })
 .put("/", authMiddleware,async(req,res)=>{

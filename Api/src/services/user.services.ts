@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"
+import { $Enums, PrismaClient } from "@prisma/client"
 import bcrypt from "bcrypt"
 import { Response, Request } from "express"
 const prisma = new PrismaClient()
@@ -9,15 +9,44 @@ type User = {
   password: string
   username: string
   id: number
+  role?: $Enums.Role
+}
+type Profile = {
+  phone:     string
+  linkeding: string
+  github:    string
+  discord:   string
 }
 const saltRounds = Number(process.env.SALT_ROUNDS)
 const UserSevices = {
 
     create: async(req: Request,res: Response)=>{
           const userInputData: User = req.body
-
+          const profileInputData: Profile = req.body
+          let userNewData:User
+          
+            await bcrypt.genSalt(saltRounds, function(err, salt) {
+              bcrypt.hash(userInputData.password, salt, function(err, hash) {});
+            });
+            const salt = bcrypt.genSaltSync(saltRounds);
+            const hash = bcrypt.hashSync(userInputData.password,salt)
+            userNewData = {id: userInputData.id, email: userInputData.email, username: userInputData.username, password: hash, role: userInputData.role}
+      
           await prisma.user.create({
-            data: userInputData
+            data: {
+              username: userNewData.username,
+              password: userNewData.password,
+              role: userNewData.role,
+              email: userNewData.email,
+              profile: {
+                create: {
+                  phone: profileInputData.phone,
+                  github: profileInputData.github,
+                  discord: profileInputData.discord,
+                  linkeding: profileInputData.linkeding
+                }
+              }
+            ,}, select: {username: true, email: true, role: true}
           }).then(response=>{
             res
             .status(200)

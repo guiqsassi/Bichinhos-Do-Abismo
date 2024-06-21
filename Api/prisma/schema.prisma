@@ -21,30 +21,30 @@ model User {
   news          News[]
   role          Role     @default(STUDENT)
   profile       Profile?
-  squadLeaderId Int?     @unique
+  squadLeaderId Int?
   squadLeader   Squad?   @relation(fields: [squadLeaderId], references: [id])
-  squadId       Int?     @unique
+  squadId       Int?
   squad         Squad?   @relation(name: "members", fields: [squadId], references: [id])
 }
 
 model Profile {
-  id        Int    @id @unique @default(autoincrement())
-  phone     String
-  linkeding String
-  github    String
-  discord   String
-  userId    Int    @unique
-  user      User   @relation(fields: [userId], references: [id])
+  id        Int     @id @unique @default(autoincrement())
+  phone     String?
+  linkeding String?
+  github    String?
+  discord   String?
+  userId    Int     @unique
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 model Squad {
-  id      Int    @id @unique @default(autoincrement())
-  name    String
-  stack   String
-  news    News[]
-  leader  User[]
-  members User[] @relation(name: "members")
-  projects  Project[]
+  id       Int       @id @unique @default(autoincrement())
+  name     String
+  stack    String
+  news     News[]
+  leader   User[]
+  members  User[]    @relation(name: "members")
+  projects Project[]
 }
 
 model Project {
@@ -52,8 +52,8 @@ model Project {
   name         String
   technologies String
   repository   String
-  squadId Int @unique
-  squad   Squad @relation(fields: [squadId], references: [id])
+  squadId      Int    @unique
+  squad        Squad  @relation(fields: [squadId], references: [id])
 }
 
 model News {

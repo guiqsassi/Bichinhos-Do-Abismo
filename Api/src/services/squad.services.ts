@@ -29,7 +29,7 @@ const squadServices = {
           }).then(response=>{
             res
             .status(201)
-            .json({message: "usuário criado com sucesso", response})
+            .json({message: "squad criado com sucesso", response})
           })
     },
     read: async(req: Request, res: Response)=>{
@@ -105,16 +105,17 @@ const squadServices = {
     },
     addMember: async (req:Request,res:Response)=>{
       const addMembers:SquadManageMember = req.body
-
+      console.log(addMembers);
+      
       await prisma.squad.update({
-        where: {id: addMembers.idSquad},
+        where: {id: Number(addMembers.idSquad)},
         data: {
-          leader: {connect: {id: addMembers.idUser}}
+          members: {connect: {id: Number(addMembers.idUser)}}
         }
       }).then(r=>{
           res
         .status(200)
-        .json({message: "leader adcionado com sucesso", r})
+        .json({message: "Membro adcionado com sucesso", r})
 
       }).catch(e=>{
         res
@@ -128,7 +129,7 @@ const squadServices = {
       await prisma.squad.update({
         where: {id: leadersIds.idSquad},
         data: {
-          leader: {connect: {id: leadersIds.idUser}}
+          leader: {disconnect: {id: leadersIds.idUser}}
         }
       }).then(r=>{
           res
@@ -145,19 +146,19 @@ const squadServices = {
     const addMembers:SquadManageMember = req.body
 
     await prisma.squad.update({
-      where: {id: addMembers.idSquad},
+      where: {id: Number(addMembers.idSquad)},
       data: {
-        leader: {connect: {id: addMembers.idUser}}
+        members: {disconnect: {id: Number(addMembers.idUser)}}
       }
     }).then(r=>{
         res
       .status(200)
-      .json({message: "leader adcionado com sucesso", r})
+      .json({message: "Membro removido com sucesso", r})
 
     }).catch(e=>{
       res
       .status(400)
-      .json({message: "Erro ao adcionar leader", e})
+      .json({message: "Erro ao remover membro", e})
     })
 }
 }
