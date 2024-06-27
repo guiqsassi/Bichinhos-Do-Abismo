@@ -18,9 +18,10 @@ leaderMiddleware.use(async(req, res, next)=>{
             res.status(401)
             .json({message: "Token inválido"})
         }else{
-            prisma.user.findUnique({where: {id: Number(decode.id)}}).then(r=>{
+              const user = prisma.user.findUnique({where: {id: Number(decode.id)}}).then(r=>{
 
               if(r.role == "LEADER" || r.role == "ADMIN"){
+                req.user = user
                 next()
               }else{
                 res

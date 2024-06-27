@@ -81,20 +81,33 @@ const UserSevices = {
       })
     },
     delete: async(req:Request, res:Response)=>{
-      const id = req.query.id
-      await prisma.user.delete({where: {id: Number(id)}}).then(response =>{
+      const idUser = Number(req.query.id)
+      const id =Number(req.userID)
+
+      const requester = await prisma.user.findUnique({where: {id}})
+      if(requester.role == "ADMIN" || id == idUser){
+      await prisma.user.delete({where: {id: idUser}}).then(response =>{
       res
       .status(204)
       }).catch(err=>{
         res
         .status(400)
         .json({message: "algo deu errado ao tentar deletar esta user", err})
-      })
+      })}else{
+        res
+        .status(400)
+        .json({message: "você não tem permissão de deletar este usuário"})
+      }
     
     },
     update: async (req:Request, res:Response)=>{
         const userInputData:User  = req.body
-        const id = userInputData.id
+        const id =Number(req.userID)
+
+        const requester = await prisma.user.findUnique({where: {id}})
+        //validar se o usuário que fez a requisição é o dono do perfil ou admin
+        if(requester.role == "ADMIN" || id == Number(userInputData.id)){
+
         let userNewData:User
         if(userInputData.password){
           await bcrypt.genSalt(saltRounds, function(err, salt) {
@@ -107,18 +120,19 @@ const UserSevices = {
           userNewData = userInputData
         }
         await prisma.squad.update({
-          where: {id},
+          where: {id: Number(userInputData.id)},
           data: userNewData
         }).then(response=>{
           res
           .status(200)
-          .json({message: "squad atualizado com sucesso", response})
+          .json({message: "usuário atualizado com sucesso", response})
 
         }).catch(err=>{
           res
           .status(400)
           .json({message: "Houve algum problema para encontrar sua squad", err})
         })
+      }
     },
 
   

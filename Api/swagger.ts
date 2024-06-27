@@ -28,7 +28,6 @@ const options = {
 }
 
 const swaggerSpec = swaggerJsdoc(options)
-console.log(docs.User);
 
 swagger.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 

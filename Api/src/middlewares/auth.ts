@@ -16,7 +16,7 @@ authMiddleware.use((req, res, next)=>{
             .json({message: "Token inválido"})
         }else{
             console.log(decode);
-            
+             req.userID = decode.id;
             next()
         }
 

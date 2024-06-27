@@ -16,7 +16,9 @@ const newsService =  {
   
   create: async(req: Request,res: Response)=>{
     const newsInputData: News = req.body
+    const leader = req.user
 
+    if(leader.squadLeaderId == newsInputData.squad || leader.role == "ADMIN"){
     await prisma.news.create({
       data: {
         tittle: newsInputData.tittle,
@@ -41,7 +43,11 @@ const newsService =  {
       res
         .status(400)
         .json({message: "erro ao criar a noticia", e})
-      })
+      })}else{
+        res
+        .status(400)
+        .json({message: "Você não tem permissão de criar uma noticia nessa squad"})
+      }
   },
   read: async(req: Request, res: Response)=>{
   const id = req.query.id
@@ -64,7 +70,10 @@ const newsService =  {
     })
   },
   list: async(req:Request, res: Response)=>{
-  await prisma.news.findMany({      
+    const squadId = req.body
+  await prisma.news.findMany(
+    {      
+    where: {squadId},
     select:{
     tittle: true,
     content: true,
@@ -75,28 +84,39 @@ const newsService =  {
   }}).then(response=>{
      res
     .status(200)
-    .json({message: "squads encontradas", response})
+    .json({message: "noticias encontradas", response})
   }).catch(err=>{
     res
     .status(400)
-    .json({message: "squads não encontradas", response: err})
+    .json({message: "noticias não encontradas", response: err})
   })
   },
   delete: async(req:Request, res:Response)=>{
   const id = req.query.id
+  const leader = req.user
+
+  if(leader.squadLeaderId == id || leader.role == "ADMIN"){
   await prisma.squad.delete({where: {id: Number(id)}}).then(response =>{
   res
   .status(204)
   }).catch(err=>{
     res
     .status(400)
-    .json({message: "algo deu errado ao tentar deletar esta squad", err})
-  })
+    .json({message: "algo deu errado ao tentar deletar esta noticia", err})
+  })}else{
+    res
+    .status(400)
+    .json({message: "você não tem permissão para apagar essa noticia"})
+  }
 
   },
   update: async (req:Request, res:Response)=>{
     const newsInputData: News = req.body
     const id = newsInputData.id
+
+    const leader = req.user
+
+    if(leader.squadLeaderId == newsInputData.squad || leader.role == "ADMIN"){
     await prisma.squad.update({
       where: {id},
       data: newsInputData
@@ -109,7 +129,11 @@ const newsService =  {
       res
       .status(400)
       .json({message: "Houve algum problema para encontrar sua noticia", err})
-    })
+    })}else{
+      res
+      .status(400)
+      .json({message: "você não tem permissão para atualizar essa noticia"})
+    }
   },
 
   

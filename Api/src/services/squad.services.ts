@@ -86,7 +86,8 @@ const squadServices = {
     },
     addLeader: async (req:Request,res:Response)=>{
         const leadersIds:SquadManageLeader = req.body
-
+        const leader = req.user
+        if(leader.squadLeaderId == leadersIds.idSquad || leader.role == "ADMIN"){
         await prisma.squad.update({
           where: {id: leadersIds.idSquad},
           data: {
@@ -101,12 +102,18 @@ const squadServices = {
           res
           .status(400)
           .json({message: "Erro ao adcionar leader", e})
-        })
+        })}else{
+          res
+          .status(400)
+          .json({message: "Você não tem permissões sobre essa squad"})
+        }
     },
     addMember: async (req:Request,res:Response)=>{
       const addMembers:SquadManageMember = req.body
       console.log(addMembers);
-      
+      const leader = req.user
+
+      if(leader.squadLeaderId == addMembers.idSquad || leader.role == "ADMIN"){
       await prisma.squad.update({
         where: {id: Number(addMembers.idSquad)},
         data: {
@@ -120,12 +127,19 @@ const squadServices = {
       }).catch(e=>{
         res
         .status(400)
-        .json({message: "Erro ao adcionar leader", e})
-      })
+        .json({message: "Erro ao adcionar membro", e})
+      })}
+      else{
+        res
+        .status(400)
+        .json({message: "Você não tem permissões sobre essa squad"})
+      }
   },
   removeLeader: async (req:Request,res:Response)=>{
       const leadersIds:SquadManageLeader = req.body
+      const leader = req.user
 
+      if(leader.squadLeaderId == leadersIds.idSquad || leader.role == "ADMIN"){
       await prisma.squad.update({
         where: {id: leadersIds.idSquad},
         data: {
@@ -140,11 +154,17 @@ const squadServices = {
         res
         .status(400)
         .json({message: "Erro ao adcionar leader", e})
-      })
+      })}else{
+        res
+        .status(400)
+        .json({message: "Você não tem permissões sobre essa squad"})
+      }
   },
   removeMember: async (req:Request,res:Response)=>{
     const addMembers:SquadManageMember = req.body
+    const leader = req.user
 
+    if(leader.squadLeaderId == addMembers.idSquad || leader.role == "ADMIN"){
     await prisma.squad.update({
       where: {id: Number(addMembers.idSquad)},
       data: {
@@ -159,7 +179,11 @@ const squadServices = {
       res
       .status(400)
       .json({message: "Erro ao remover membro", e})
-    })
+    })}else{
+      res
+      .status(400)
+      .json({message: "Você não tem permissões sobre essa squad"})
+    }
 }
 }
 
